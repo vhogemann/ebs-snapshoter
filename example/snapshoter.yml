@@ -7,8 +7,13 @@ vol-VVVV1113:
   freeze_mysql: true
   mysql_user: root
   mysql_password: ZD3D2112
+  databases: 
+    - foo
+    - bar
+  tags:
+    Name: sbubbles
   keep: 20
-  
+    
 vol-BBBBB1112:
   mount_point: /data2
   frequency: weekly

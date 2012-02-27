@@ -15,8 +15,11 @@ module Snapshoter
     
       def snapshot_volume(volume)
         logger.info "[Volume #{volume.id}] Snapshot started"
-        if ec2.create_snapshot(volume.id)
+        if snap = ec2.create_snapshot(volume.id)
           logger.info "[Volume #{volume.id}] Snapshot complete"
+          if volume.tags
+            ec2.create_tags(snap[:aws_id],volume.tags)
+          end
         else
           logger.error "[Volume #{volume.id}] Snapshot failed!"
         end

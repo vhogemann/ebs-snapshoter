@@ -2,23 +2,26 @@
 module Snapshoter
 
   # :stopdoc:
-  VERSION = '0.1.0'
-  LIBPATH = ::File.expand_path(::File.dirname(__FILE__)) + ::File::SEPARATOR
+  LIBPATH = ::File.expand_path('..', __FILE__) + ::File::SEPARATOR
   PATH = ::File.dirname(LIBPATH) + ::File::SEPARATOR
+  VERSION = ::File.read(PATH + 'version.txt').strip
   # :startdoc:
-
-  # Returns the version string for the library.
-  #
-  def self.version
-    VERSION
-  end
 
   # Returns the library path for the module. If any arguments are given,
   # they will be joined to the end of the libray path using
   # <tt>File.join</tt>.
   #
   def self.libpath( *args )
-    args.empty? ? LIBPATH : ::File.join(LIBPATH, args.flatten)
+    rv =  args.empty? ? LIBPATH : ::File.join(LIBPATH, args.flatten)
+    if block_given?
+      begin
+        $LOAD_PATH.unshift LIBPATH
+        rv = yield
+      ensure
+        $LOAD_PATH.shift
+      end
+    end
+    return rv
   end
 
   # Returns the lpath for the module. If any arguments are given,
@@ -26,7 +29,16 @@ module Snapshoter
   # <tt>File.join</tt>.
   #
   def self.path( *args )
-    args.empty? ? PATH : ::File.join(PATH, args.flatten)
+    rv = args.empty? ? PATH : ::File.join(PATH, args.flatten)
+    if block_given?
+      begin
+        $LOAD_PATH.unshift PATH
+        rv = yield
+      ensure
+        $LOAD_PATH.shift
+      end
+    end
+    return rv
   end
 
   # Utility method used to require all files ending in .rb that lie in the
@@ -42,30 +54,6 @@ module Snapshoter
     Dir.glob(search_me).sort.each {|rb| require rb}
   end
 
-end  # module Snapshoter
-
-class Hash
-  def symbolize_keys
-    inject({}) do |options, (key, value)|
-      options[(key.to_sym rescue key) || key] = value
-      options
-    end
-  end
-  
-  def except!(*keys)
-    keys.map! { |key| convert_key(key) } if respond_to?(:convert_key)
-    keys.each { |key| delete(key) }
-    self
-  end
-  
-  def except(*keys)
-    dup.except!(*keys)
-  end
-end
-
-
-
+end  # module Ebsnap
 
 Snapshoter.require_all_libs_relative_to(__FILE__)
-
-# EOF

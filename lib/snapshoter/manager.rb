@@ -28,7 +28,12 @@ module Snapshoter
           logger.debug "[Volume #{volume}] Starting snapshot"
           success = false
           begin
-            lock_mysql(mysql) if mysql
+            if mysql
+              lock_mysql(mysql)
+              if volume.databases 
+                dump_mysql(volume)
+              end
+            end
             freeze_xfs(volume.mount_point)
             @provider.snapshot_volume(volume)
           rescue Exception => e
@@ -82,6 +87,17 @@ module Snapshoter
       mysql.query   "UNLOCK TABLES"
     end
     
+    def dump_mysql(volume)
+      t = Time.now.strftime "%Y-%m-%d-%H%M"
+      volume.databases.each do |db|
+        `mysqldump #{db} > /#{volume.mount_point}/#{db}-#{t}.sql`
+        if File.exists? "/#{volume.mount_point}/#{db}-#{t}.sql"
+          `unlink /#{volume.mount_point}/#{db}.sql`
+          `ln -s /#{volume.mount_point}/#{db}-#{t}.sql /#{volume.mount_point}/#{db}.sql`
+        end
+      end
+    end
+    
     def delete_old_snapshots(volume)
       logger.debug "Deleting old snapshots of volume #{volume}"
       begin
@@ -97,7 +113,7 @@ module Snapshoter
     def should_take_snapshot(volume)
       if last_snapshot_at = @provider.last_snapshot_at(volume)
         
-        last = last_snapshot_at.localtime
+        last = Time.new last_snapshot_at
         now  = Time.now
         
         if volume.frequency == :hourly

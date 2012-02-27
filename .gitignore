@@ -3,3 +3,4 @@ doc/*
 ri/*
 annoucement.txt
 .DS_Store
+snapshoter.gemspec

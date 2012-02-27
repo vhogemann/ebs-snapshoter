@@ -13,10 +13,13 @@ module Snapshoter
   class Volume
     ValidFrequencies = [:hourly, :daily, :weekly]
     
-    attr_reader :id, :mount_point, :frequency, :freeze_mysql, :mysql_user, :mysql_password, :mysql_port, :mysql_sock, :keep
+    attr_reader :id, :mount_point, :frequency, :freeze_mysql, :mysql_user, :mysql_password, :mysql_port, :mysql_sock, :keep, :databases, :tags
     
-    def initialize(volume_id, options={})
-      options = options.symbolize_keys
+    def initialize(volume_id, opts={})
+      options = {}
+      opts.each_pair do |k,v|
+        options[k.to_sym] = v
+      end
       
       @id = volume_id
       @mount_point = options.delete(:mount_point)
@@ -27,6 +30,9 @@ module Snapshoter
       @mysql_port = options.delete(:mysql_port) 
       @mysql_sock = options.delete(:mysql_sock) 
       @keep = options.delete(:keep) || 7
+      
+      @databases = options.delete(:databases)
+      @tags = options.delete(:tags)
       
       @frequency = @frequency.to_sym
       

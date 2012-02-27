@@ -1,34 +1,19 @@
-# Look in the tasks/setup.rb file for the various options that can be
-# configured in this Rakefile. The .rake files in the tasks directory
-# are where the options are used.
 
 begin
   require 'bones'
-  Bones.setup
 rescue LoadError
-  begin
-    load 'tasks/setup.rb'
-  rescue LoadError
-    raise RuntimeError, '### please install the "bones" gem ###'
-  end
+  abort '### Please install the "bones" gem ###'
 end
 
-ensure_in_path 'lib'
-require 'snapshoter'
+task :default => 'test:run'
+task 'gem:release' => 'test:run'
 
-task :default => 'spec:run'
-
-PROJ.name = 'snapshoter'
-PROJ.authors = 'Kris Rasmussen'
-PROJ.email = 'Kris Rasmussen'
-PROJ.url = 'http://www.dreamthis.com'
-PROJ.version = Snapshoter::VERSION
-PROJ.rubyforge.name = 'snapshoter'
-PROJ.spec.opts << '--color'
-
-# use hanna template for rdoc
-require 'hanna/rdoctask'
-
-depend_on 'right_aws'
-
-# EOF
+Bones {
+  name     'snapshoter'
+  authors  'Kris Rasmussen'
+  email    'victor.hogemann@gmail.com'
+  url      'https://github.com/vhogemann/ebs-snapshoter'
+  
+  depend_on 'mysql'
+  depend_on 'right_aws', '~> 3.0.0'
+}

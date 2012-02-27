@@ -1,0 +1,103 @@
+--- !ruby/object:Gem::Specification
+name: snapshoter
+version: !ruby/object:Gem::Version
+  version: 0.0.0
+  prerelease: 
+platform: ruby
+authors:
+- Kris Rasmussen
+autorequire: 
+bindir: bin
+cert_chain: []
+date: 2012-02-24 00:00:00.000000000 Z
+dependencies:
+- !ruby/object:Gem::Dependency
+  name: bones
+  requirement: &19296060 !ruby/object:Gem::Requirement
+    none: false
+    requirements:
+    - - ! '>='
+      - !ruby/object:Gem::Version
+        version: 3.7.3
+  type: :development
+  prerelease: false
+  version_requirements: *19296060
+description: ! 'Provides EBS snapshot automation that can be configured and run on
+  an EC2 instance.
+
+
+  Snapshot Process:
+
+
+  * Read configuration
+
+  * Fetch snapshot descriptions from ec2
+
+  * For each volume in configuration
+
+  * - If it is time to run a new snapshot based on the most recent snapshot date
+
+  * -- freeze mysql (if using mysql)
+
+  * -- freeze xfs
+
+  * -- create the snapshot
+
+  * -- unfreeze xfs
+
+  * -- unfreeze mysql
+
+  * -- delete old snapshots'
+email: victor.hogemann@gmail.com
+executables:
+- snapshoter
+extensions: []
+extra_rdoc_files:
+- History.txt
+- README.txt
+- bin/snapshoter
+files:
+- .bnsignore
+- .gitignore
+- History.txt
+- README.txt
+- Rakefile
+- bin/snapshoter
+- example/snapshoter.yml
+- lib/snapshoter.rb
+- lib/snapshoter/config.rb
+- lib/snapshoter/manager.rb
+- lib/snapshoter/provider/ec2.rb
+- lib/snapshoter/volume.rb
+- spec/snapshoter_spec.rb
+- spec/spec_helper.rb
+- test/test_snapshoter.rb
+homepage: https://github.com/vhogemann/ebs-snapshoter
+licenses: []
+post_install_message: 
+rdoc_options:
+- --main
+- README.txt
+require_paths:
+- lib
+required_ruby_version: !ruby/object:Gem::Requirement
+  none: false
+  requirements:
+  - - ! '>='
+    - !ruby/object:Gem::Version
+      version: '0'
+required_rubygems_version: !ruby/object:Gem::Requirement
+  none: false
+  requirements:
+  - - ! '>='
+    - !ruby/object:Gem::Version
+      version: '0'
+requirements: []
+rubyforge_project: snapshoter
+rubygems_version: 1.8.15
+signing_key: 
+specification_version: 3
+summary: Provides EBS snapshot automation that can be configured and run on an EC2
+  instance.
+test_files:
+- test/test_snapshoter.rb
